@@ -1,10 +1,29 @@
-import express from 'express';
+
 import 'dotenv/config';
 import connectDB from './db/index.js';
-const server = express();
-const port = process.env.PORT;
+import {server} from './app.js';
 
-server.listen(port,(req, res)=>{
-    console.log(`server is listing on port no ${port}`);
-    connectDB();
-});
+const port = process.env.PORT || 8000;
+
+// 1st way
+
+// connectDB()
+// .then(() =>{
+//     server.listen(port, () =>{
+//         console.log(`server is listing on port no : ${port}`);
+        
+//     })
+// })
+// .catch((err) =>{
+//     console.log('mogodb connection failed!!' , err);
+    
+// })
+
+
+// 2.nd way 
+
+server.listen(port, () =>{
+       console.log(`server is fired sucessfully on port no ${port}`);
+       connectDB();
+       
+})
