@@ -4,6 +4,7 @@ import ApiError from "../utils/ApiError.js"
 import{User} from "../models/user.model.js"
 import{uploadOnCloudinary} from "../utils/cloudinary.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
+import jwt from "jsonwebtoken";
 
 const genratteAcessAndRefereshToken = async(userId) =>{
     try {
@@ -166,4 +167,49 @@ const logoutUser = asyncHandler(async(req, res) => {
 })
 
 
-export {registerUser, loginUser, logoutUser}
+const refereshAcessToken = asyncHandler(async(req,res)=>{
+    const incomigRefeshToken = req.cookies.refershToken || req.body.refershToken
+
+    if(incomigRefeshToken){
+        throw new ApiError(401,"Unatuthirized request")
+    }
+
+    try {
+        const decodedToken = jwt.verify(
+            incomigRefeshToken,
+            process.env.REFRESH_TOKEN_SECRET
+        )
+    
+        const user = await  User.findById(decodedToken?._id)
+    
+        if(!user){
+            throw new ApiError(401,"Invalid Refersh Token")
+        }
+    
+        if(incomigRefeshToken !== user?.refershToken){
+            throw new ApiError(401,"refesh Token is invalid or used")
+        }
+        const options = {
+            httpOnly:true,
+            secure:true
+        }
+    
+       const {accessToken,newrefershToken} = await genratteAcessAndRefereshToken(user._id)
+    
+        return res
+        .status(200)
+        .cookie("accessToken",accessToken,options)
+        .cookie("refershToken",newrefershToken, options)
+        .json(
+            new ApiResponse(
+                200,
+                {accessToken,refershToken:newrefershToken},
+                "Access token refereshd"
+            )
+        )
+    } catch (error) {
+          throw new ApiError(401,"Invalid refershToken")
+    }
+})
+
+export {registerUser, loginUser, logoutUser,refereshAcessToken}
