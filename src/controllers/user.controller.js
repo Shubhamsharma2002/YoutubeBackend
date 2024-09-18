@@ -170,7 +170,7 @@ const logoutUser = asyncHandler(async(req, res) => {
 const refereshAcessToken = asyncHandler(async(req,res)=>{
     const incomigRefeshToken = req.cookies.refershToken || req.body.refershToken
 
-    if(incomigRefeshToken){
+    if(!incomigRefeshToken){
         throw new ApiError(401,"Unatuthirized request")
     }
 
