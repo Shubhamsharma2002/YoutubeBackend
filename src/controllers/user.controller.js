@@ -9,12 +9,12 @@ const genratteAcessAndRefereshToken = async(userId) =>{
     try {
         
        const user = await User.findById(userId);
-       const AccessToken = user.genrateAcessToken()
+       const accessToken = user.genrateAcessToken()
        const refershToken = user.genrateRefershToken()
        user.refershToken = refershToken 
        user.save({validateBeforeSave:false})
 
-       return {AccessToken, refershToken}
+       return {accessToken, refershToken}
     } catch (error) {
         throw new ApiError(500, "something went wrong while genrating acess and referesh token");
     }
@@ -97,8 +97,13 @@ const loginUser = asyncHandler(async(req,res)=>{
 
     const {username, email, password} = req.body;
 
-    if(!(username || email)){
-        throw new ApiError(400, 'username or email is required');
+    // if(!(username || email)){
+    //     throw new ApiError(400, 'username or email is required');
+    // }
+    if(!username|| !email){
+        if(!username&& !email){
+            throw new ApiError(400, 'username or email is required');
+        }
     }
     const user = await User.findOne({
         $or:[{username}, {email}]
@@ -112,7 +117,7 @@ const loginUser = asyncHandler(async(req,res)=>{
     if(!isValidPassword){
         throw new ApiError(401, "Invalid user credentials")
     }
-    const {AccessToken,refershToken} = await genratteAcessAndRefereshToken(user._id);
+    const {accessToken,refershToken} = await genratteAcessAndRefereshToken(user._id);
 
     const loggedInUser = await User.findById(user._id).
     select("-password -refreshToken");
@@ -122,40 +127,43 @@ const loginUser = asyncHandler(async(req,res)=>{
         secure:true
     }
     return res.status(200)
-    .cookie("AccessToken", AccessToken,option)
+    .cookie("accessToken", accessToken,option)
     .cookie("refereshToken", refershToken, option)
     .json(
         new ApiResponse(
             200,
             {
-                user:loggedInUser,AccessToken,refershToken
+                user:loggedInUser,accessToken,refershToken
             },
             "user loged in Sucessfully"
         )
     )
 })
 
-const logOut = asyncHandler(async(req,res)=>{
+const logoutUser = asyncHandler(async(req, res) => {
     await User.findByIdAndUpdate(
         req.user._id,
         {
-           $set:{
-            refershToken:undefined
-           }
+            $set: {
+                refreshToken: undefined
+            }
         },
         {
-            new:true
+            new: true
         }
     )
-    const option = {
-        httpOnly:true,
-        secure:true
+
+    const options = {
+        httpOnly: true,
+        secure: true
     }
 
     return res
     .status(200)
-    .clearCookie("AccessToken",option)
-    .clearCookie("refereshToken",option)
-    .json(new ApiResponse(200,{},"user loged out suceesfully"))
+    .clearCookie("accessToken", options)
+    .clearCookie("refershToken", options)
+    .json(new ApiResponse(200, {}, "User logged Out"))
 })
-export {registerUser, loginUser, logOut}
+
+
+export {registerUser, loginUser, logoutUser}
