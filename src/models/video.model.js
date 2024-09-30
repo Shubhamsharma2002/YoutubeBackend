@@ -11,7 +11,7 @@ const videoSchema = new Schema(
             required : true
         },
         title:{
-            type:String, 
+            type:String,//something 
             required : true
         },
         description:{
