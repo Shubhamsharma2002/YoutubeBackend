@@ -302,7 +302,7 @@ const updateUserCoverImg = asyncHandler(async(req,res)=>{
     if(!coverimg.url){
         throw new ApiError(400,"Error while uploading the avatar")
     }
-
+// delete cluod also
    const data =  await User.findByIdAndUpdate(
         req.user?.id,
         {

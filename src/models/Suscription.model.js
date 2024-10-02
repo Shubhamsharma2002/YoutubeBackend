@@ -12,7 +12,10 @@ const subscriptionSchema = new Schema({
         ref:"User"
     }
 },
-{timestamps:true}
+{
+    timestamps:true
+
+}
 );
 
 
