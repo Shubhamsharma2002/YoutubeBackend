@@ -20,6 +20,8 @@ const genratteAcessAndRefereshToken = async(userId) =>{
         throw new ApiError(500, "something went wrong while genrating acess and referesh token");
     }
 }
+
+// Registration 
 const registerUser = asyncHandler(async(req,res) =>{
    
     //  get user details from frontend
@@ -89,7 +91,7 @@ const registerUser = asyncHandler(async(req,res) =>{
      )
 })
 
-
+// Login 
 const loginUser = asyncHandler(async(req,res)=>{
     // login based on username || email
     // password
@@ -140,7 +142,7 @@ const loginUser = asyncHandler(async(req,res)=>{
         )
     )
 })
-
+// Logout
 const logoutUser = asyncHandler(async(req, res) => {
     await User.findByIdAndUpdate(
         req.user._id,
@@ -166,7 +168,7 @@ const logoutUser = asyncHandler(async(req, res) => {
     .json(new ApiResponse(200, {}, "User logged Out"))
 })
 
-
+// refersh token
 const refereshAcessToken = asyncHandler(async(req,res)=>{
     const incomigRefeshToken = req.cookies.refershToken || req.body.refershToken
 
@@ -212,7 +214,7 @@ const refereshAcessToken = asyncHandler(async(req,res)=>{
     }
 })
 
-
+// change password
 const ChnageCurrentPassword = asyncHandler(async(req,res)=>{
      const {oldPassword , newPassword} = req.body;
      const user = await User.findById(req.user?._id);
