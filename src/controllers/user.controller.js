@@ -231,7 +231,7 @@ const ChnageCurrentPassword = asyncHandler(async(req,res)=>{
      .status(200)
      .json(new ApiResponse(200,{} , "Password updated Sucessfully"));
 })
-
+// login user details
 const getCurrentUser = asyncHandler(async(req, res)=>{
     return res 
     .status(200)
@@ -265,7 +265,7 @@ const updateAccountDetails = asyncHandler(async(req, res)=>{
    )
 })
 
-
+// update profile
 const updateUserAvatar = asyncHandler(async(req,res)=>{
     const avatarLocal = req.file?.path;
     if(!avatarLocal){
@@ -294,7 +294,7 @@ const updateUserAvatar = asyncHandler(async(req,res)=>{
    )
 })
 
-
+// update coverImg
 const updateUserCoverImg = asyncHandler(async(req,res)=>{
     const coverimgLocal = req.file?.path;
     if(!coverimgLocal){
@@ -394,7 +394,7 @@ const getUserChannelProfile = asyncHandler(async(req,res)=>{
     )
 })
  
-
+// watchHistory 
 const getWatchHistory = asyncHandler(async(req,res)=>{
     const user = await User.aggregate([
         {
